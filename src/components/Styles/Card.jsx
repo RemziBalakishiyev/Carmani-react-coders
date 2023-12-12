@@ -14,7 +14,8 @@ import { useNavigate } from "react-router-dom";
 function Card({ id, image, title, price, description, type }) {
   const PrContext = useContext(ProductContext);
   const navigate = useNavigate();
-  const onHandleCard = (id) => {
+  const onHandleCard = (e, id) => {
+    e.stopPropagation();
     PrContext.addCard(id);
   };
 
@@ -40,7 +41,7 @@ function Card({ id, image, title, price, description, type }) {
           <Button
             variant='contained'
             color='warning'
-            onClick={() => onHandleCard(id)}
+            onClick={(e) => onHandleCard(e, id)}
           >
             Add Card
           </Button>

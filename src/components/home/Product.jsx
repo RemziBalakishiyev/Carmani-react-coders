@@ -3,6 +3,7 @@ import { Divider, Stack, Button, Grid } from "@mui/material";
 import ProductCard from "./ProductCard";
 import FilterProduct from "./FilterProduct";
 import { ProductContext } from "../../store/product-context";
+import useFetch from "../../hooks/useFetch";
 
 function Product() {
   const [loadData, setloadData] = useState([]);
@@ -13,22 +14,16 @@ function Product() {
   };
 
   PrContext.handleFilterForType = filterForType;
-  useEffect(function () {
-    fetch("https://carmani-projects-default-rtdb.firebaseio.com/products.json")
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseData) => {
-        console.log();
-        setloadData(filterForType(1, Object.values(responseData)));
 
-        PrContext.products = Object.values(responseData);
-        PrContext.filteredProducts = filterForType(
-          1,
-          Object.values(responseData)
-        );
-      });
-  }, []);
+  const { responseData, error } = useFetch(
+    "https://carmani-projects-default-rtdb.firebaseio.com/products.json",
+    (value) => {
+      setloadData(value);
+    }
+  );
+
+  PrContext.products = responseData;
+  PrContext.filteredProducts = filterForType(1, responseData);
 
   PrContext.handleFilter = () => {
     setloadData((prevData) => [...PrContext.filteredProducts]);
@@ -53,7 +48,7 @@ function Product() {
         rowSpacing={1}
         sx={{ flexDirection: "row", padding: "16px 36px" }}
       >
-        {Object.values(loadData).map((product) => (
+        {loadData.map((product) => (
           <Grid item xs={3} md={3}>
             <ProductCard
               id={product.id}
